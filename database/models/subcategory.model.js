@@ -17,12 +17,13 @@ const subcategorySchema = new mongoose.Schema(
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "category",
+      required: true,
     },
   },
   { timestamps: true }
 );
 
-export const subcategoryModel = mongoose.model(
+export const subCategoryModel = mongoose.model(
   "subcategory",
   subcategorySchema
 );
