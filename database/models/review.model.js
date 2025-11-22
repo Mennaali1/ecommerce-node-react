@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { userModel } from "./user.model";
+import { userModel } from "./user.model.js";
 const reviewSchema = new mongoose.Schema(
   {
     userId: {
@@ -12,6 +12,12 @@ const reviewSchema = new mongoose.Schema(
       ref: "product",
       required: true,
     },
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
+    },
     comment: {
       type: String,
       required: true,
@@ -23,4 +29,7 @@ const reviewSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+reviewSchema.pre(/^find/, function () {
+  this.populate("userId", "name -_id");
+});
 export const reviewModel = mongoose.model("review", reviewSchema);

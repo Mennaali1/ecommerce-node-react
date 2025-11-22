@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -21,6 +22,7 @@ const userSchema = new mongoose.Schema(
       minLength: 6,
       maxlength: 20,
     },
+    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "product" }],
     role: {
       type: String,
       enum: ["user", "admin"],
@@ -46,8 +48,17 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    passwordChangedAt: Date,
   },
   { timestamps: true }
 );
-
+userSchema.pre("save", function () {
+  console.log(this);
+  this.password = bcrypt.hashSync(this.password, 7);
+});
+userSchema.pre("findOneAndUpdate", function () {
+  if (this._update.password)
+    this._update.password = bcrypt.hashSync(this._update.password, 7);
+  console.log(this);
+});
 export const userModel = mongoose.model("user", userSchema);
